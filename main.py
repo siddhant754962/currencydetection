@@ -9,24 +9,17 @@ import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime
 
+# --- Configuration & Styling ---
+st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layout="wide")
+
+# Pre-selected, high-end color palette
+bg_main = "#1C1C29"
+bg_card = "rgba(45, 45, 69, 0.7)"
+accent_color = "#6D28D9"
+sub_accent = "#E5E7EB"
+button_color = "#C026D3"
+
 # --- API Functions ---
-def get_background_url():
-    """Fetches a random tech-themed photo from Unsplash API with a panning animation."""
-    try:
-        # NOTE: To enable this feature, replace 'YOUR_UNSPLASH_ACCESS_KEY' with your actual key.
-        access_key = "YOUR_UNSPLASH_ACCESS_KEY" 
-        if access_key == "YOUR_UNSPLASH_ACCESS_KEY":
-            return None
-
-        query = "futuristic abstract dark technology"
-        url = f"https://api.unsplash.com/photos/random?query={query}&orientation=landscape&client_id={access_key}"
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-        data = response.json()
-        return data['urls']['full']
-    except requests.exceptions.RequestException:
-        return None
-
 def get_themed_text():
     """Simulates an API call to get professionally written text."""
     import random
@@ -41,40 +34,26 @@ def get_contextual_icon(status):
     """Fetches an icon based on the prediction status."""
     try:
         if status == 'valid':
-            icon_name = "tabler:checks"
+            url = "https://www.svgrepo.com/show/365313/check.svg"
         else:
-            icon_name = "tabler:x"
-        url = f"https://api.iconify.design/{icon_name}.svg"
+            url = "https://www.svgrepo.com/show/365314/x.svg"
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException:
         return ""
 
-# --- Configuration & Styling ---
-st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layout="wide")
-
-# Pre-selected, high-end color palette
-bg_main = "#1C1C29"
-bg_card = "rgba(45, 45, 69, 0.7)"
-accent_color = "#6D28D9"
-sub_accent = "#E5E7EB"
-button_color = "#C026D3"
-
-bg_url = get_background_url()
+# --- Static Background URL for consistency ---
+STATIC_BACKGROUND_URL = "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 
 # Dynamic background CSS
 bg_style = f"""
-    background-image: url('{bg_url}');
-    background-size: 110% 110%;
+    background-image: url('{STATIC_BACKGROUND_URL}');
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    animation: pan 60s infinite alternate;
-""" if bg_url else f"""
-    background: linear-gradient(-45deg, #1C1C29, #2D2D45, #1C1C29);
-    background-size: 400% 400%;
-    animation: gradient-animation 15s ease infinite;
+    animation: none;
 """
 
 st.markdown(f"""
@@ -99,17 +78,6 @@ st.markdown(f"""
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
             z-index: -1;
-        }}
-
-        @keyframes pan {{
-            0% {{ background-position: 0% 0%; }}
-            100% {{ background-position: 100% 100%; }}
-        }}
-
-        @keyframes gradient-animation {{
-            0% {{ background-position: 0% 50%; }}
-            50% {{ background-position: 100% 50%; }}
-            100% {{ background-position: 0% 50%; }}
         }}
 
         .main-container {{
@@ -226,39 +194,43 @@ st.markdown(f"""
     unsafe_allow_html=True
 )
 
-# JavaScript for 3D hover effect and real-time clock
-st.html(
-    """
+# --- New: Get server time and pass it to JavaScript ---
+current_time_str = datetime.now().strftime("%I:%M:%S %p")
+st.html(f"""
     <script>
     // 3D Hover Effect
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', (e) => {{
         const cards = document.querySelectorAll('.prediction-card');
-        cards.forEach(card => {
+        cards.forEach(card => {{
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             const y_rotation = ((x / rect.width) - 0.5) * 15;
             const x_rotation = ((y / rect.height) - 0.5) * -15;
-            card.style.transform = `rotateY(${y_rotation}deg) rotateX(${x_rotation}deg)`;
-        });
-    });
+            card.style.transform = `rotateY(${{y_rotation}}deg) rotateX(${{x_rotation}}deg)`;
+        }});
+    }});
 
-    // Real-Time Clock
-    function updateClock() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const timeString = `${hours}:${minutes}:${seconds}`;
+    // Real-Time Clock - Corrected to use server time
+    let serverTime = new Date("{datetime.now().isoformat()}");
+
+    function updateClock() {{
+        serverTime.setSeconds(serverTime.getSeconds() + 1);
+        const hours = String(serverTime.getHours()).padStart(2, '0');
+        const minutes = String(serverTime.getMinutes()).padStart(2, '0');
+        const seconds = String(serverTime.getSeconds()).padStart(2, '0');
+        const ampm = serverTime.getHours() >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        const timeString = `${{displayHours}}:${{minutes}}:${{seconds}} ${{ampm}}`;
         const clockElement = document.getElementById('real-time-clock');
-        if (clockElement) {
+        if (clockElement) {{
             clockElement.innerText = timeString;
-        }
-    }
+        }}
+    }}
     setInterval(updateClock, 1000);
     </script>
-    """
-)
+""")
+
 
 # --- Load Model and Scaler ---
 try:
@@ -487,5 +459,4 @@ if st.session_state.history:
     
     st.dataframe(display_df, use_container_width=True)
     
-current_time_str = datetime.now().strftime("%I:%M:%S %p")
 st.markdown(f'<div class="footer">**Real-Time Status:** <span id="real-time-clock">{current_time_str}</span></div>', unsafe_allow_html=True)
