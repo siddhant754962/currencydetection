@@ -16,7 +16,7 @@ st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layou
 bg_main = "#121212"  # Dark gray background
 bg_card = "rgba(25, 25, 25, 0.7)"  # Semi-transparent dark card
 accent_color = "#4A90E2"  # Professional blue for headings and buttons
-sub_accent = "#E0E0E0"  # Clean off-white for text
+sub_accent = "#FFFFFF"  # Pure white for all text
 button_color = "#72A9E8"  # Lighter blue for button hover
 
 # --- API Functions ---
@@ -59,7 +59,7 @@ st.markdown(f"""
 
         body {{
             font-family: 'Poppins', sans-serif;
-            color: {sub_accent};
+            color: {sub_accent}; /* Main text color is now pure white */
         }}
         
         [data-testid="stAppViewContainer"] {{
@@ -89,7 +89,7 @@ st.markdown(f"""
             background-color: {accent_color};
             border: none;
             border-radius: 5px;
-            color: {sub_accent};
+            color: {sub_accent}; /* Button text is now pure white */
             font-size: 1em;
             font-weight: 600;
             padding: 12px 24px;
@@ -154,7 +154,7 @@ st.markdown(f"""
         .metric-title {{
             font-size: 1.2em;
             font-weight: 600;
-            color: {accent_color};
+            color: {accent_color}; /* Title of the metric card is now blue */
         }}
         
         .metric-value {{
