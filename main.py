@@ -12,13 +12,12 @@ from datetime import datetime
 # --- Configuration & Styling ---
 st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layout="wide")
 
-# Beautiful, consistent color palette
-# Deep Blue / Teal theme
-bg_main = "#0B0C10" # Darkest background
-bg_card = "rgba(19, 21, 26, 0.7)" # Transparent card background
-accent_color = "#66FCF1" # Bright teal accent for titles and buttons
-sub_accent = "#C5C6C7" # Light gray for main text
-button_color = "#45A29E" # Secondary teal for button hover
+# New, professional color palette for consistency and readability
+bg_main = "#121212"  # Dark gray background
+bg_card = "rgba(25, 25, 25, 0.7)"  # Semi-transparent dark card
+accent_color = "#4A90E2"  # Professional blue for headings and buttons
+sub_accent = "#E0E0E0"  # Clean off-white for text
+button_color = "#72A9E8"  # Lighter blue for button hover
 
 # --- API Functions ---
 def get_themed_text():
@@ -44,9 +43,7 @@ def get_contextual_icon(status):
     except requests.exceptions.RequestException:
         return ""
 
-# --- Removed: STATIC_BACKGROUND_URL is no longer needed ---
-
-# Dynamic background CSS - now using a solid color
+# --- Dynamic background CSS - now using a solid color ---
 bg_style = f"""
     background-color: {bg_main};
     background-size: cover;
@@ -69,20 +66,6 @@ st.markdown(f"""
             {bg_style}
         }}
         
-        /* Removed the ::after pseudo-element as it's not needed for solid background */
-        /*
-        [data-testid="stAppViewContainer"]::after {{
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: -1;
-        }}
-        */
-
         .main-container {{
             background: {bg_card};
             border-radius: 15px;
@@ -106,7 +89,7 @@ st.markdown(f"""
             background-color: {accent_color};
             border: none;
             border-radius: 5px;
-            color: {bg_main};
+            color: {sub_accent};
             font-size: 1em;
             font-weight: 600;
             padding: 12px 24px;
@@ -223,7 +206,7 @@ st.html(f"""
         let hours = serverTime.getHours();
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? hours : 12; // The hour '0' should be '12'
+        hours = hours ? hours : 12;
         const minutes = String(serverTime.getMinutes()).padStart(2, '0');
         const seconds = String(serverTime.getSeconds()).padStart(2, '0');
         const timeString = `${{hours}}:${{minutes}}:${{seconds}} ${{ampm}}`;
