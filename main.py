@@ -16,7 +16,7 @@ st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layou
 bg_main = "#121212"  # Dark gray background
 bg_card = "rgba(25, 25, 25, 0.7)"  # Semi-transparent dark card
 accent_color = "#4A90E2"  # Professional blue for headings and buttons
-sub_accent = "#FFFFFF"  # Pure white for all text
+sub_accent = "#FFFFFF"  # Pure white for all body text
 button_color = "#72A9E8"  # Lighter blue for button hover
 
 # --- API Functions ---
@@ -59,7 +59,7 @@ st.markdown(f"""
 
         body {{
             font-family: 'Poppins', sans-serif;
-            color: {sub_accent}; /* Main text color is now pure white */
+            color: {sub_accent}; /* All body text is now pure white */
         }}
         
         [data-testid="stAppViewContainer"] {{
@@ -79,7 +79,7 @@ st.markdown(f"""
         
         h1, h2, h3 {{
             font-family: 'Poppins', sans-serif;
-            color: {accent_color};
+            color: {accent_color}; /* Headings remain blue */
             font-weight: 700;
         }}
         h1 {{ text-align: center; }}
@@ -103,14 +103,14 @@ st.markdown(f"""
         }}
         
         [data-testid="stNumberInput"] label {{
-            color: {sub_accent};
+            color: {sub_accent}; /* Input labels are now pure white */
             font-weight: 600;
         }}
         [data-testid="stNumberInput"] div input {{
             background-color: rgba(0, 0, 0, 0.3);
             border: 1px solid {accent_color};
             border-radius: 3px;
-            color: {sub_accent};
+            color: {sub_accent}; /* Input text is now pure white */
         }}
         [data-testid="stNumberInput"] div input:focus {{
             border-color: {accent_color};
@@ -124,7 +124,7 @@ st.markdown(f"""
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            color: {sub_accent};
+            color: {sub_accent}; /* Card text is now pure white */
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -136,7 +136,7 @@ st.markdown(f"""
         }}
         
         .footer {{
-            color: {sub_accent};
+            color: {sub_accent}; /* Footer text is now pure white */
             font-size: 12px;
             text-align: center;
             margin-top: 40px;
@@ -160,7 +160,7 @@ st.markdown(f"""
         .metric-value {{
             font-size: 2em;
             font-weight: 700;
-            color: {sub_accent};
+            color: {sub_accent}; /* Metric value text is now pure white */
         }}
         
         /* 📱 Responsive Adjustments */
@@ -182,7 +182,6 @@ st.markdown(f"""
 )
 
 # --- New: Get server time and pass it to JavaScript ---
-current_time_str = datetime.now().strftime("%I:%M:%S %p")
 st.html(f"""
     <script>
     // 3D Hover Effect
