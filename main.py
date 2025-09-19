@@ -12,12 +12,12 @@ from datetime import datetime
 # --- Configuration & Styling ---
 st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layout="wide")
 
-# New, professional color palette for consistency and readability
-bg_main = "#121212"  # Dark gray background
+# Safe, high-contrast color palette for consistency
+bg_main = "#121212"  # Deep dark gray
 bg_card = "rgba(25, 25, 25, 0.7)"  # Semi-transparent dark card
-accent_color = "#4A90E2"  # Professional blue for headings and buttons
+accent_color = "#50C2E8"  # Professional blue for headings and buttons (as it's high contrast)
 sub_accent = "#FFFFFF"  # Pure white for all body text
-button_color = "#72A9E8"  # Lighter blue for button hover
+button_color = "#80D7F5"  # Lighter blue for button hover
 
 # --- API Functions ---
 def get_themed_text():
@@ -79,7 +79,7 @@ st.markdown(f"""
         
         h1, h2, h3 {{
             font-family: 'Poppins', sans-serif;
-            color: {accent_color}; /* Headings remain blue */
+            color: {sub_accent}; /* All headings are now pure white for consistency */
             font-weight: 700;
         }}
         h1 {{ text-align: center; }}
@@ -108,7 +108,7 @@ st.markdown(f"""
         }}
         [data-testid="stNumberInput"] div input {{
             background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid {accent_color};
+            border: 1px solid {sub_accent}; /* Input borders are now white for clarity */
             border-radius: 3px;
             color: {sub_accent}; /* Input text is now pure white */
         }}
