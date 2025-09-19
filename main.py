@@ -12,12 +12,13 @@ from datetime import datetime
 # --- Configuration & Styling ---
 st.set_page_config(page_title="Banknote Authentication", page_icon="💵", layout="wide")
 
-# Pre-selected, high-end color palette
-bg_main = "#1C1C29"
-bg_card = "rgba(45, 45, 69, 0.7)"
-accent_color = "#6D28D9"
-sub_accent = "#E5E7EB"
-button_color = "#C026D3"
+# Beautiful, consistent color palette
+# Deep Blue / Teal theme
+bg_main = "#0B0C10" # Darkest background
+bg_card = "rgba(19, 21, 26, 0.7)" # Transparent card background
+accent_color = "#66FCF1" # Bright teal accent for titles and buttons
+sub_accent = "#C5C6C7" # Light gray for main text
+button_color = "#45A29E" # Secondary teal for button hover
 
 # --- API Functions ---
 def get_themed_text():
@@ -43,12 +44,11 @@ def get_contextual_icon(status):
     except requests.exceptions.RequestException:
         return ""
 
-# --- Static Background URL for consistency ---
-STATIC_BACKGROUND_URL = "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+# --- Removed: STATIC_BACKGROUND_URL is no longer needed ---
 
-# Dynamic background CSS
+# Dynamic background CSS - now using a solid color
 bg_style = f"""
-    background-image: url('{STATIC_BACKGROUND_URL}');
+    background-color: {bg_main};
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -69,6 +69,8 @@ st.markdown(f"""
             {bg_style}
         }}
         
+        /* Removed the ::after pseudo-element as it's not needed for solid background */
+        /*
         [data-testid="stAppViewContainer"]::after {{
             content: '';
             position: absolute;
@@ -79,6 +81,7 @@ st.markdown(f"""
             background-color: rgba(0, 0, 0, 0.7);
             z-index: -1;
         }}
+        */
 
         .main-container {{
             background: {bg_card};
@@ -103,7 +106,7 @@ st.markdown(f"""
             background-color: {accent_color};
             border: none;
             border-radius: 5px;
-            color: {sub_accent};
+            color: {bg_main};
             font-size: 1em;
             font-weight: 600;
             padding: 12px 24px;
@@ -113,6 +116,7 @@ st.markdown(f"""
         }}
         .stButton>button:hover {{
             background-color: {button_color};
+            color: {sub_accent};
         }}
         
         [data-testid="stNumberInput"] label {{
