@@ -177,13 +177,35 @@ st.markdown(f"""
         .prediction-card:hover {{
             transform: translateY(-5px);
         }}
-
+        
         .footer {{
             color: {sub_accent};
             font-size: 12px;
             text-align: center;
             margin-top: 40px;
         }}
+        
+        .metric-card {{
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid {accent_color};
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin: 10px 0;
+        }}
+        
+        .metric-title {{
+            font-size: 1.2em;
+            font-weight: 600;
+            color: {accent_color};
+        }}
+        
+        .metric-value {{
+            font-size: 2em;
+            font-weight: 700;
+            color: {sub_accent};
+        }}
+
     </style>
     """,
     unsafe_allow_html=True
@@ -231,6 +253,10 @@ except FileNotFoundError:
     st.error("❌ Authentication Module Not Found. Please check the model and scaler file paths.")
     st.stop()
 
+# --- Session State for History ---
+if 'history' not in st.session_state:
+    st.session_state.history = []
+
 # --- Page Content ---
 st.title("Secure Banknote Verification System")
 st.markdown("### A.I. Powered Currency Scan Protocol")
@@ -273,6 +299,14 @@ if st.button("RUN AUTHENTICATION SCAN"):
     input_scaled = scaler.transform(input_data)
     prediction = svm.predict(input_scaled)[0]
     probability = svm.predict_proba(input_scaled)[0]
+    
+    # Store the result in session state
+    st.session_state.history.append({
+        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'input': {'variance': variance, 'skewness': skewness, 'curtosis': curtosis, 'entropy': entropy},
+        'prediction': 'Authentic' if prediction == 0 else 'Counterfeit',
+        'confidence': max(probability)
+    })
 
     st.markdown("---")
     st.subheader("Verification Report")
@@ -316,9 +350,48 @@ if st.button("RUN AUTHENTICATION SCAN"):
     else:
         st.error("🚨 Authentication Failed: This banknote is **COUNTERFEIT**.")
 
-    st.subheader("📊 Recent Fraud Trends")
-    st.bar_chart(pd.DataFrame({'Month': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], 'Fraud Rate (%)': [0.2, 0.3, 0.1, 0.4, 0.2, 0.5]}).set_index('Month'))
+    st.subheader("📊 Statistical Analysis & Visualization")
     
+    # --- Feature Value Radar Chart ---
+    st.markdown("#### Input Feature Radar Chart")
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(
+        r=[variance, skewness, curtosis, entropy, variance],
+        theta=['Variance', 'Skewness', 'Curtosis', 'Entropy', 'Variance'],
+        fill='toself',
+        name='Banknote Features',
+        marker=dict(color=accent_color)
+    ))
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[-5, 5]),
+            bgcolor="rgba(0,0,0,0)",
+        ),
+        showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(color=sub_accent),
+        height=350
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    # --- Prediction Confidence Donut Chart ---
+    st.markdown("#### Prediction Confidence")
+    fig2 = go.Figure(data=[go.Pie(
+        labels=['Authentic', 'Counterfeit'],
+        values=[probability[0], probability[1]],
+        hole=.5,
+        marker_colors=[accent_color, button_color],
+        textinfo='label+percent'
+    )])
+    fig2.update_layout(
+        showlegend=True,
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(color=sub_accent),
+        height=300
+    )
+    st.plotly_chart(fig2, use_container_width=True)
+    
+    # --- Feature Importance ---
     st.subheader("🔎 Feature Importance")
     if hasattr(svm, 'coef_'):
         importance_df = pd.DataFrame(
@@ -349,5 +422,45 @@ st.info(
     This model is highly effective at distinguishing between real and counterfeit banknotes based on their feature characteristics.
     """
 )
+
+# --- History and Metrics Dashboard ---
+if st.session_state.history:
+    st.markdown("---")
+    st.subheader("📈 Verification History & Live Metrics")
+    
+    history_df = pd.DataFrame(st.session_state.history)
+    
+    # Live Metrics
+    metrics_col1, metrics_col2 = st.columns(2)
+    total_scans = len(st.session_state.history)
+    
+    with metrics_col1:
+        authentic_count = history_df[history_df['prediction'] == 'Authentic'].shape[0]
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">Total Authentic Scans</div>
+                <div class="metric-value">{authentic_count}</div>
+            </div>
+            """, unsafe_allow_html=True
+        )
+
+    with metrics_col2:
+        counterfeit_count = history_df[history_df['prediction'] == 'Counterfeit'].shape[0]
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">Total Counterfeit Scans</div>
+                <div class="metric-value">{counterfeit_count}</div>
+            </div>
+            """, unsafe_allow_html=True
+        )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Display History Table
+    st.markdown("#### Recent Verification Log")
+    st.dataframe(history_df.tail(10).sort_values(by='timestamp', ascending=False))
+    
 current_time_str = datetime.now().strftime("%I:%M:%S %p")
 st.markdown(f'<div class="footer">**Real-Time Status:** <span id="real-time-clock">{current_time_str}</span></div>', unsafe_allow_html=True)
