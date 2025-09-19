@@ -46,7 +46,7 @@ def get_contextual_icon(status):
             icon_name = "tabler:x"
         url = f"https://api.iconify.design/{icon_name}.svg"
         response = requests.get(url, timeout=5)
-        response.raise_for_status() # Corrected line
+        response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException:
         return ""
@@ -119,8 +119,6 @@ st.markdown(f"""
             box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            width: 90%; 
-            margin: auto;
         }}
         
         h1, h2, h3 {{
@@ -207,20 +205,6 @@ st.markdown(f"""
             font-weight: 700;
             color: {sub_accent};
         }}
-        
-        /* 📱 Responsive Adjustments */
-        @media (max-width: 768px) {{
-            .main-container {{
-                padding: 20px;
-            }}
-            /* Force Streamlit columns to stack vertically */
-            .st-emotion-cache-18ni294 {{
-                flex-direction: column;
-            }}
-            .prediction-card-container, .metric-card {{
-                margin-bottom: 20px;
-            }}
-        }}
 
     </style>
     """,
@@ -281,7 +265,6 @@ st.write(get_themed_text())
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 st.subheader("Enter Banknote Biometrics")
 
-# Using a single column on small screens
 col1, col2 = st.columns(2)
 with col1:
     variance = st.number_input("Variance", value=0.0, format="%.4f")
@@ -328,7 +311,6 @@ if st.button("RUN AUTHENTICATION SCAN"):
     st.markdown("---")
     st.subheader("Verification Report")
     
-    # Using a single column for prediction cards on small screens
     col_real, col_fake = st.columns(2)
     
     valid_icon = get_contextual_icon('valid')
@@ -478,7 +460,7 @@ if st.session_state.history:
     
     # Display History Table
     st.markdown("#### Recent Verification Log")
-    st.dataframe(history_df.tail(10).sort_values(by='timestamp', ascending=False), use_container_width=True)
+    st.dataframe(history_df.tail(10).sort_values(by='timestamp', ascending=False))
     
 current_time_str = datetime.now().strftime("%I:%M:%S %p")
 st.markdown(f'<div class="footer">**Real-Time Status:** <span id="real-time-clock">{current_time_str}</span></div>', unsafe_allow_html=True)
