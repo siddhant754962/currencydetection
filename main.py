@@ -220,12 +220,13 @@ st.html(f"""
 
     function updateClock() {{
         serverTime.setSeconds(serverTime.getSeconds() + 1);
-        const hours = String(serverTime.getHours()).padStart(2, '0');
+        let hours = serverTime.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // The hour '0' should be '12'
         const minutes = String(serverTime.getMinutes()).padStart(2, '0');
         const seconds = String(serverTime.getSeconds()).padStart(2, '0');
-        const ampm = serverTime.getHours() >= 12 ? 'PM' : 'AM';
-        const displayHours = hours % 12 || 12;
-        const timeString = `${{displayHours}}:${{minutes}}:${{seconds}} ${{ampm}}`;
+        const timeString = `${{hours}}:${{minutes}}:${{seconds}} ${{ampm}}`;
         const clockElement = document.getElementById('real-time-clock');
         if (clockElement) {{
             clockElement.innerText = timeString;
@@ -463,4 +464,4 @@ if st.session_state.history:
     
     st.dataframe(display_df, use_container_width=True)
     
-st.markdown(f'<div class="footer">**Real-Time Status:** <span id="real-time-clock">{current_time_str}</span></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="footer">**Real-Time Status:** <span id="real-time-clock">{datetime.now().strftime("%I:%M:%S %p")}</span></div>', unsafe_allow_html=True)
