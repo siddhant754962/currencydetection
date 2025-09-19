@@ -119,6 +119,8 @@ st.markdown(f"""
             box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            width: 90%; 
+            margin: auto;
         }}
         
         h1, h2, h3 {{
@@ -204,6 +206,19 @@ st.markdown(f"""
             font-size: 2em;
             font-weight: 700;
             color: {sub_accent};
+        }}
+        
+        /* 📱 Responsive Adjustments */
+        @media (max-width: 768px) {{
+            .main-container {{
+                padding: 20px;
+            }}
+            .st-emotion-cache-18ni294 {{
+                flex-direction: column;
+            }}
+            .prediction-card-container, .metric-card {{
+                margin-bottom: 20px;
+            }}
         }}
 
     </style>
@@ -458,9 +473,19 @@ if st.session_state.history:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Display History Table
+    # Display History Table - FIXED for overflow
     st.markdown("#### Recent Verification Log")
-    st.dataframe(history_df.tail(10).sort_values(by='timestamp', ascending=False))
+    
+    # Create a simplified DataFrame for display
+    display_df = history_df.tail(10).sort_values(by='timestamp', ascending=False).copy()
+    
+    # Format the confidence for better readability
+    display_df['confidence'] = display_df['confidence'].apply(lambda x: f"{x*100:.2f}%")
+    
+    # Remove the wide 'input' column that causes overflow
+    display_df = display_df.drop(columns=['input'])
+    
+    st.dataframe(display_df, use_container_width=True)
     
 current_time_str = datetime.now().strftime("%I:%M:%S %p")
 st.markdown(f'<div class="footer">**Real-Time Status:** <span id="real-time-clock">{current_time_str}</span></div>', unsafe_allow_html=True)
